@@ -6,11 +6,11 @@ Created by Naman Patwari on 10/4/2016.
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
 
 
-from .forms import LoginForm, RegisterForm, UpdateForm
+from .forms import LoginForm, RegisterForm, UpdateForm, EngineerForm
 from .models import MyUser, Student
 
 # Auth Views
@@ -47,50 +47,52 @@ def auth_logout(request):
 def auth_register(request):
 	if request.user.is_authenticated():
 		return HttpResponseRedirect("/")
-	
-	form = RegisterForm(request.POST or None)
-	if form.is_valid():
-		new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
-			password=form.cleaned_data["password2"], 
-			first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'])
-		new_user.save()	
-		#Also registering students		
-		new_student = Student(user = new_user)
-		new_student.save()
-		login(request, new_user);	
-		messages.success(request, 'Success! Your account was created.')
-		if form.cleaned_data['role'] == 'teacher':
-			return render(request, 'index.html')
-		elif form.cleaned_data['role'] == 'engineer':
-			return HttpResponseRedirect("/registerEngineer")
-		elif form.cleaned_data['role'] == 'student':
-			return render(request, 'index.html')
-		else:
-			return render(request, 'index.html')
 
+	form = RegisterForm(request.POST or None)
 	context = {
 		"form": form,
 		"page_name" : "Register",
 		"button_value" : "Register",
 		"links" : ["login"],
 	}
+	if form.is_valid():
+		request.session['form'] = form.cleaned_data
+		if form.cleaned_data['role'] == 'teacher':
+			return render(request, 'index.html')
+		elif form.cleaned_data['role'] == 'engineer':
+			request.session['role'] = 'engineer'
+			return HttpResponseRedirect("/register_engineer")
+		elif form.cleaned_data['role'] == 'student':
+			return render(request, 'index.html')
+		else:
+			return render(request, 'index.html')
+
 	return render(request, 'auth_form.html', context)
 
-def auth_register_engineer(request):
-	if request.user.is_authenticated():
-		return HttpResponseRedirect("/")
-	
-	form = RegisterForm(request.POST or None)
+def register_engineer(request):
+	if any(['form' not in request.session,
+			'role' not in request.session,
+			request.session['role'] != 'engineer']):		
+		return HttpRedirect("/")
+
+	last_form = request.session['form']
+	new_user = MyUser.objects.create_user(
+		email=last_form['email'], 
+		password=last_form["password2"], 
+		first_name=last_form['firstname'],
+		last_name=last_form['lastname'])
+	form = EngineerForm(request.POST or None)
 	if form.is_valid():
-		new_user = MyUser.objects.create_user(email=form.cleaned_data['email'], 
-			password=form.cleaned_data["password2"], 
-			first_name=form.cleaned_data['firstname'], last_name=form.cleaned_data['lastname'])
-		new_user.save()	
-		#Also registering students		
-		new_student = Student(user = new_user)
-		new_student.save()
+		new_user.save()
+		new_engineer = Engineer(
+			user=new_user,
+			alma_mater=form.cleaned_data['alma_mater'],
+			about=form.cleaned_data['about'],
+			phone_number=form.cleaned_data['phone_number']
+		)
+		new_engineer.save()	
 		login(request, new_user);	
-		messages.success(request, 'Success! Your account was created.')
+		messages.success(request, 'Success! Your engineer account was created.')
 		return render(request, 'index.html')
 
 	context = {
@@ -99,7 +101,7 @@ def auth_register_engineer(request):
 		"button_value" : "Register",
 		"links" : ["login"],
 	}
-	return render(request, 'auth_form_engineer.html', context)
+	return render(request, 'auth_form.html', context)
 
 @login_required
 def update_profile(request):

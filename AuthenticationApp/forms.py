@@ -10,7 +10,44 @@ class LoginForm(forms.Form):
     email = forms.CharField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
+class EngineerForm(forms.Form):
+	alma_mater = forms.CharField(label='Alma Mater')
+	about = forms.CharField(label='About')
+	phone_number = forms.CharField(label='Phone number')
 
+class RegisterForm(forms.Form):
+    """A form to creating new users. Includes all the required
+    fields, plus a repeated password."""
+    email = forms.CharField(label='Email', widget=forms.EmailInput, required=True)
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput, required=True)
+    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput, required=True)    
+    firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
+    lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)            
+    # dickSucks = forms.CharField(label="Dick suck", widget=forms.TextInput, required=False)    
+    CHOICES = (
+    ('teacher','Teacher'),
+    ('student','Student'),
+    ('engineer','Engineer')
+    ) 
+    role = forms.ChoiceField(required = True, choices = CHOICES, widget=forms.RadioSelect(attrs={'class' : 'Radio'}), initial=1)
+    def clean_password2(self):
+        # Check that the two password entries match
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Passwords don't match")
+        return password2
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email")
+        #Check if email exists before
+        try:
+            exists = MyUser.objects.get(email=email)
+            raise forms.ValidationError("This email has already been taken")
+        except MyUser.DoesNotExist:
+            return email
+        except:
+            raise forms.ValidationError("There was an error, please contact us later")
 class RegisterForm(forms.Form):
     """A form to creating new users. Includes all the required
     fields, plus a repeated password."""
