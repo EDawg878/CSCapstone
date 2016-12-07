@@ -22,8 +22,7 @@ class RegisterForm(forms.Form):
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput, required=True)
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput, required=True)    
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
-    lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)            
-    # dickSucks = forms.CharField(label="Dick suck", widget=forms.TextInput, required=False)    
+    lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)               
     CHOICES = (
     ('teacher','Teacher'),
     ('student','Student'),
@@ -56,7 +55,6 @@ class RegisterForm(forms.Form):
     password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput, required=True)    
     firstname = forms.CharField(label="First name", widget=forms.TextInput, required=False)
     lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)            
-    # dickSucks = forms.CharField(label="Dick suck", widget=forms.TextInput, required=False)    
     CHOICES = (
     ('teacher','Teacher'),
     ('student','Student'),
