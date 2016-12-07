@@ -17,6 +17,7 @@ class CourseForm(forms.Form):
 	description = forms.CharField(label='Description', max_length=300)
 
 class TeacherForm(forms.Form):
+	name = forms.CharField(label='Name', max_length=50)
 	subject = forms.CharField(label='subject', max_length=200)
 	about = forms.CharField(label='About', max_length=300)
 	phone_number = forms.CharField(label='Phone Number', max_length=20)
