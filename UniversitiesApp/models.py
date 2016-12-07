@@ -26,3 +26,16 @@ class Course(models.Model):
 
 	def __str__(self):
 		return self.name
+
+class Teacher(models.Model):
+	user = models.OneToOneField(
+		MyUser,
+		on_delete=models.CASCADE,
+		primary_key=True)
+
+	subject = models.CharField(max_length=200)
+	about = models.CharField(max_length=300)
+	phone_number = models.CharField(max_length=20)
+
+	def __str__(self):
+		return user.email

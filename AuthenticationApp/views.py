@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from CompaniesApp.models import Engineer
-
-from .forms import LoginForm, RegisterForm, UpdateForm, EngineerForm
+from UniversitiesApp.models import Teacher
+from .forms import LoginForm, RegisterForm, UpdateForm, EngineerForm, TeacherForm
 from .models import MyUser, Student
 
 # Auth Views
@@ -58,7 +58,8 @@ def auth_register(request):
 	if form.is_valid():
 		request.session['form'] = form.cleaned_data
 		if form.cleaned_data['role'] == 'teacher':
-			return render(request, 'index.html')
+			request.session['role'] = 'teacher'
+			return HttpResponseRedirect("/register_teacher")
 		elif form.cleaned_data['role'] == 'engineer':
 			request.session['role'] = 'engineer'
 			return HttpResponseRedirect("/register_engineer")
@@ -74,6 +75,7 @@ def register_engineer(request):
 			'role' not in request.session,
 			request.session['role'] != 'engineer']):		
 		return HttpRedirect("/")
+		messages.success(request, 'we got a')
 
 	last_form = request.session['form']
 	form = EngineerForm(request.POST or None)
@@ -94,6 +96,40 @@ def register_engineer(request):
 		new_engineer.save()	
 		login(request, new_user);	
 		messages.success(request, 'Success! Your engineer account was created.')
+		return render(request, 'index.html')
+
+	context = {
+		"form": form,
+		"page_name" : "Register",
+		"button_value" : "Register",
+		"links" : ["login"],
+	}
+	return render(request, 'auth_form.html', context)
+def register_teacher(request):
+	if any(['form' not in request.session,
+			'role' not in request.session,
+			request.session['role'] != 'teacher']):		
+		return HttpRedirect("/")
+
+	last_form = request.session['form']
+	form = TeacherForm(request.POST or None)
+	if form.is_valid():
+		new_user = MyUser.objects.create_user(
+			email=last_form['email'], 
+			password=last_form["password2"], 
+			first_name=last_form['firstname'],
+			last_name=last_form['lastname'])
+		messages.success(request, last_form['email'] + ' saved')
+		new_user.save()
+		new_teacher = Teacher(
+			user=new_user,
+			subject=form.cleaned_data['subject'],
+			about=form.cleaned_data['about'],
+			phone_number=form.cleaned_data['phone_number']
+		)
+		new_teacher.save()	
+		login(request, new_user);	
+		messages.success(request, 'Success! Your Teacher account was created.')
 		return render(request, 'index.html')
 
 	context = {

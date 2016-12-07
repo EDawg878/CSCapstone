@@ -16,3 +16,5 @@ class EngineerForm(forms.Form):
 	alma_mater = forms.CharField(label='Alma Mater', max_length=50)
 	about = forms.CharField(label='About', max_length=300)
 	phone_number = forms.CharField(label='Phone Number', max_length=20)
+
+
