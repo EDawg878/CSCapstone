@@ -11,8 +11,8 @@ from django.contrib import messages
 from CompaniesApp.models import Engineer
 from UniversitiesApp.models import Teacher
 from .forms import LoginForm, RegisterForm, UpdateForm
-from CompaniesApp.forms import EngineerForm
-from UniversitiesApp.forms import TeacherForm 
+from CompaniesApp.forms import EngineerForm, UpdateEngineerForm
+from UniversitiesApp.forms import TeacherForm, UpdateTeacherForm
 from .models import MyUser, Student
 
 # Auth Views
@@ -77,7 +77,6 @@ def register_engineer(request):
 			'role' not in request.session,
 			request.session['role'] != 'engineer']):		
 		return HttpRedirect("/")
-		messages.success(request, 'we got a')
 
 	last_form = request.session['form']
 	form = EngineerForm(request.POST or None)
@@ -95,7 +94,7 @@ def register_engineer(request):
 			user=new_user,
 			alma_mater=form.cleaned_data['alma_mater'],
 			about=form.cleaned_data['about'],
-			phone_number=form.cleaned_data['phone_number']
+			phone_number=form.cleaned_data['phone_number'],
 		)
 		new_engineer.save()	
 		login(request, new_user);	
@@ -109,6 +108,7 @@ def register_engineer(request):
 		"links" : ["login"],
 	}
 	return render(request, 'auth_form.html', context)
+
 def register_teacher(request):
 	if any(['form' not in request.session,
 			'role' not in request.session,
@@ -123,7 +123,7 @@ def register_teacher(request):
 			password=last_form["password2"], 
 			first_name=last_form['first_name'],
 			last_name=last_form['last_name'],
-			role=last_form['form']
+			role=last_form['role']
 			)
 		messages.success(request, last_form['email'] + ' saved')
 		new_user.save()
@@ -152,6 +152,38 @@ def update_profile(request):
 	if form.is_valid():
 		form.save()
 		messages.success(request, 'Success, your profile was saved!')
+
+	context = {
+		"form": form,
+		"page_name" : "Update",
+		"button_value" : "Update",
+		"links" : ["logout"],
+	}
+	return render(request, 'auth_form.html', context)
+
+@login_required
+def update_engineer_profile(request):
+	engineer = Engineer.objects.filter(user_id = request.user.id)[0]
+	form = UpdateEngineerForm(request.POST or None, instance=engineer)
+	if form.is_valid():
+		form.save()
+		messages.success(request, 'Success, your engineer profile was saved!')
+
+	context = {
+		"form": form,
+		"page_name" : "Update",
+		"button_value" : "Update",
+		"links" : ["logout"],
+	}
+	return render(request, 'auth_form.html', context)
+
+@login_required
+def update_teacher_profile(request):
+	teacher = Teacher.objects.filter(user_id = request.user.id)[0]
+	form = UpdateTeacherForm(request.POST or None, instance=teacher)
+	if form.is_valid():
+		form.save()
+		messages.success(request, 'Success, your teacher profile was saved!')
 
 	context = {
 		"form": form,

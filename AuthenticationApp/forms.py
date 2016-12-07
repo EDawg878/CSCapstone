@@ -5,6 +5,8 @@ Created by Naman Patwari on 10/4/2016.
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
 from .models import MyUser
+from CompaniesApp.models import Engineer
+from UniversitiesApp.models import Teacher
 
 class LoginForm(forms.Form):
     email = forms.CharField(label='Email')
@@ -80,8 +82,6 @@ class UpdateForm(forms.ModelForm):
             return email[:email.find("@")]      
         return first_name
    
-
-
 """Admin Forms"""
 
 class AdminUserCreationForm(forms.ModelForm):
