@@ -5,7 +5,6 @@ Created by Jacob Dunbar on 11/5/2016.
 """
 from django.db import models
 from AuthenticationApp.models import MyUser
-from ProjectsApp.models import Project
 
 # Create your models here.
 class University(models.Model):
