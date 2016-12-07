@@ -59,7 +59,15 @@ def auth_register(request):
 		new_student.save()
 		login(request, new_user);	
 		messages.success(request, 'Success! Your account was created.')
-		return render(request, 'index.html')
+		if form.cleaned_data['role'] == 'teacher':
+			return render(request, 'index.html')
+		elif form.cleaned_data['role'] == 'engineer':
+			return render(request, 'index.html')
+		elif form.cleaned_data['role'] == 'student':
+			return render(request, 'index.html')
+		else:
+			return render(request, 'index.html')
+		# return render(request, 'index.html')
 
 	context = {
 		"form": form,
