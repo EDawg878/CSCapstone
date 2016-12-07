@@ -18,17 +18,7 @@
 				<ul class="nav navbar-nav">
 				{% if user.is_authenticated == False %}
 					<li><a href="/login">Login</a></li>
-					<li role="presentation" class="dropdown">
-						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-						  Register As<span class="caret"></span>
-						</a>
-						<ul class="dropdown-menu">
-							<li><a href="/register-engineer">Engineer</a></li>
-							<li><a href="/register-teacher">Teacher</a></li>
-							<li><a href="/register-student">Student</a></li>
-						</ul>
-					</li>
-					<!-- <li><a href="/register">Register</a></li> -->
+					<li><a href="/register">Register</a></li>
 				{% else %}
 					<li><a href="/update">Update Profile</a></li>
 					<li role="presentation" class="dropdown">
