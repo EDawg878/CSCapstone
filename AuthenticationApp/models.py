@@ -10,7 +10,7 @@ from django.db.models.signals import post_save
 
 # Create your models here.
 class MyUserManager(BaseUserManager):
-    def create_user(self, email=None, password=None, first_name=None, last_name=None):
+    def create_user(self, email=None, password=None, first_name=None, last_name=None, role=None):
         if not email:
             raise ValueError('Users must have an email address')
 
@@ -20,6 +20,7 @@ class MyUserManager(BaseUserManager):
         user.set_password(password)
         user.first_name = first_name
         user.last_name = last_name
+        user.role=role
 
         #If first_name is not present, set it as email's username by default
         if first_name is None or first_name == "" or first_name == '':
@@ -40,6 +41,11 @@ class MyUser(AbstractBaseUser):
         max_length=255,
         unique=True,
     )
+
+    role = models.CharField(
+        max_length=120,
+        default=""
+        )
 
     first_name = models.CharField(
     	max_length=120,

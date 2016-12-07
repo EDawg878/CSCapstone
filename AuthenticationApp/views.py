@@ -86,7 +86,9 @@ def register_engineer(request):
 			email=last_form['email'], 
 			password=last_form["password2"], 
 			first_name=last_form['first_name'],
-			last_name=last_form['last_name'])
+			last_name=last_form['last_name'],
+			role=last_form['role']
+			)
 		messages.success(request, last_form['email'] + ' saved')
 		new_user.save()
 		new_engineer = Engineer(
@@ -120,7 +122,9 @@ def register_teacher(request):
 			email=last_form['email'], 
 			password=last_form["password2"], 
 			first_name=last_form['first_name'],
-			last_name=last_form['last_name'])
+			last_name=last_form['last_name'],
+			role=last_form['form']
+			)
 		messages.success(request, last_form['email'] + ' saved')
 		new_user.save()
 		new_teacher = Teacher(
