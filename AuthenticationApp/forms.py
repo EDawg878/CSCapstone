@@ -21,9 +21,9 @@ class RegisterForm(forms.Form):
     lastname = forms.CharField(label="Last name", widget=forms.TextInput, required=False)            
     # dickSucks = forms.CharField(label="Dick suck", widget=forms.TextInput, required=False)    
     CHOICES = (
-    (0,'Teacher'),
-    (1,'Student'),
-    (2,'Engineer')
+    ('teacher','Teacher'),
+    ('student','Student'),
+    ('engineer','Engineer')
     ) 
     role = forms.ChoiceField(required = True, choices = CHOICES, widget=forms.RadioSelect(attrs={'class' : 'Radio'}), initial=1)
     def clean_password2(self):
