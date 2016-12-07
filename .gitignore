@@ -92,7 +92,7 @@ ENV/
 
 # Database
 db.sqlite3
-
+db.sqlite3-journal
 # Django
 
 # images

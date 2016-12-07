@@ -10,7 +10,9 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from CompaniesApp.models import Engineer
 from UniversitiesApp.models import Teacher
-from .forms import LoginForm, RegisterForm, UpdateForm, EngineerForm, TeacherForm
+from .forms import LoginForm, RegisterForm, UpdateForm
+from CompaniesApp.forms import EngineerForm
+from UniversitiesApp.forms import TeacherForm 
 from .models import MyUser, Student
 
 # Auth Views

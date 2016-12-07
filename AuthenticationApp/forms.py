@@ -10,16 +10,6 @@ class LoginForm(forms.Form):
     email = forms.CharField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
 
-class EngineerForm(forms.Form):
-	alma_mater = forms.CharField(label='Alma Mater')
-	about = forms.CharField(label='About')
-	phone_number = forms.CharField(label='Phone number')
-
-class TeacherForm(forms.Form):
-    name = forms.CharField(label='Name', max_length=50)
-    subject = forms.CharField(label='subject', max_length=200)
-    about = forms.CharField(label='About', max_length=300)
-    phone_number = forms.CharField(label='Phone Number', max_length=20)
 
 class RegisterForm(forms.Form):
     """A form to creating new users. Includes all the required
