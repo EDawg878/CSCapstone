@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
-
+from CompaniesApp.models import Engineer
 
 from .forms import LoginForm, RegisterForm, UpdateForm, EngineerForm
 from .models import MyUser, Student
@@ -76,13 +76,14 @@ def register_engineer(request):
 		return HttpRedirect("/")
 
 	last_form = request.session['form']
-	new_user = MyUser.objects.create_user(
-		email=last_form['email'], 
-		password=last_form["password2"], 
-		first_name=last_form['firstname'],
-		last_name=last_form['lastname'])
 	form = EngineerForm(request.POST or None)
 	if form.is_valid():
+		new_user = MyUser.objects.create_user(
+			email=last_form['email'], 
+			password=last_form["password2"], 
+			first_name=last_form['firstname'],
+			last_name=last_form['lastname'])
+		messages.success(request, last_form['email'] + ' saved')
 		new_user.save()
 		new_engineer = Engineer(
 			user=new_user,
