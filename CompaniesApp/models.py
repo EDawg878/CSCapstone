@@ -24,7 +24,8 @@ class Engineer(models.Model):
 		MyUser,
 		on_delete=models.CASCADE,
 		primary_key=True)
-
+	first_name = models.CharField(max_length=50,default ="")
+	last_name = models.CharField(max_length=50, default="")
 	alma_mater = models.CharField(max_length=50)
 	about = models.CharField(max_length=300)
 	phone_number = models.CharField(max_length=20)

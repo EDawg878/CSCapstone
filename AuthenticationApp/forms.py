@@ -43,6 +43,21 @@ class RegisterForm(forms.Form):
             return email
         except:
             raise forms.ValidationError("There was an error, please contact us later")
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get("firstname")
+        #Check is email has changed
+        if first_name is None or first_name == "" or first_name == '':  
+            email = self.cleaned_data.get("email")                               
+            return email[:email.find("@")]      
+        return first_name
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get("lastname")
+        #Check is email has changed
+        if last_name is None or last_name == "" or last_name == '':  
+            email = self.cleaned_data.get("email")                               
+            return email[:email.find("@")]      
+        return last_name
+
 
 class UpdateForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on

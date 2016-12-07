@@ -91,9 +91,12 @@ def register_engineer(request):
 		new_user.save()
 		new_engineer = Engineer(
 			user=new_user,
+			first_name=last_form['firstname'],
+			last_name=last_form['lastname'],
 			alma_mater=form.cleaned_data['alma_mater'],
 			about=form.cleaned_data['about'],
 			phone_number=form.cleaned_data['phone_number']
+			
 		)
 		new_engineer.save()	
 		login(request, new_user);	
@@ -125,6 +128,8 @@ def register_teacher(request):
 		new_user.save()
 		new_teacher = Teacher(
 			user=new_user,
+			first_name=last_form['firstname'],
+			last_name=last_form['lastname'],
 			subject=form.cleaned_data['subject'],
 			about=form.cleaned_data['about'],
 			phone_number=form.cleaned_data['phone_number']
