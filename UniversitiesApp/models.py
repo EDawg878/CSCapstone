@@ -5,6 +5,7 @@ Created by Jacob Dunbar on 11/5/2016.
 """
 from django.db import models
 from AuthenticationApp.models import MyUser
+from ProjectApp.models import Project
 
 # Create your models here.
 class University(models.Model):
@@ -23,6 +24,16 @@ class Course(models.Model):
 	description = models.CharField(max_length=300)
 	university = models.ForeignKey(University, on_delete=models.CASCADE)
 	members = models.ManyToManyField(MyUser)
+
+	def __str__(self):
+		return self.name
+
+class Engineer(models.Model):
+	name = models.CharField(max_length=50)
+	alma_mater = models.CharField(max_length=50)
+	about = models.CharField(max_length=300)
+	phone_number = models.CharField(max_length=20)
+	projects = models.ManyToManyField(Project)
 
 	def __str__(self):
 		return self.name
