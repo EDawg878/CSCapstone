@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from CompaniesApp.models import Engineer
 from UniversitiesApp.models import Teacher
-from .forms import LoginForm, RegisterForm, UpdateForm
+from .forms import LoginForm, RegisterForm, UpdateForm, StudentForm
 from CompaniesApp.forms import EngineerForm
 from UniversitiesApp.forms import TeacherForm 
 from .models import MyUser, Student
@@ -66,7 +66,8 @@ def auth_register(request):
 			request.session['role'] = 'engineer'
 			return HttpResponseRedirect("/register_engineer")
 		elif form.cleaned_data['role'] == 'student':
-			return render(request, 'index.html')
+			request.session['role'] = 'student'
+			return HttpResponseRedirect("/register_student")
 		else:
 			return render(request, 'index.html')
 
@@ -145,6 +146,40 @@ def register_teacher(request):
 		"links" : ["login"],
 	}
 	return render(request, 'auth_form.html', context)
+
+def register_student(request):
+	if any(['form' not in request.session,
+			'role' not in request.session,
+			request.session['role'] != 'student']):		
+		return HttpResponseRedirect("/")
+		messages.success(request, 'we got a')
+
+	last_form = request.session['form']
+	form = StudentForm(request.POST or None)
+	if form.is_valid():
+		new_user = MyUser.objects.create_user(
+			email=last_form['email'], 
+			password=last_form["password2"], 
+			first_name=last_form['first_name'],
+			last_name=last_form['last_name'],
+			role=last_form['role']
+			)
+		messages.success(request, last_form['email'] + ' saved')
+		new_user.save()
+		new_student = Student(user=new_user)
+		new_student.save()	
+		login(request, new_user);	
+		messages.success(request, 'Success! Your student account was created.')
+		return render(request, 'index.html')
+
+	context = {
+		"form": form,
+		"page_name" : "Register",
+		"button_value" : "Register",
+		"links" : ["login"],
+	}
+	return render(request, 'auth_form.html', context)
+
 
 @login_required
 def update_profile(request):

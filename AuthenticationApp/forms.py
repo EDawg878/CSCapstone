@@ -6,6 +6,9 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from django import forms
 from .models import MyUser
 
+class StudentForm(forms.Form):
+    pass
+
 class LoginForm(forms.Form):
     email = forms.CharField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
