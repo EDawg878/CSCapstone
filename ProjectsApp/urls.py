@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^project/form$', views.getProjectForm, name='ProjectsForm'),
     url(r'^project$', views.getProject, name='Project'),
     url(r'^project/join$', views.joinProject, name='JoinProject'),
-    url(r'^project/unjoin$', views.unjoinProject, name='UnjoinProject')
+    url(r'^project/unjoin$', views.unjoinProject, name='UnjoinProject'),
+    url(r'^project/edit$', views.editProject, name='EditProject')
 ]

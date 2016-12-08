@@ -32,6 +32,22 @@ def getProjectForm(request):
 		return render(request, 'projectform.html', context)
 	return render(request, 'autherror.html')
 
+def editProject(request):
+    project_id = request.GET.get('project', 'None')
+    project = models.Project.objects.get(id__exact=project_id)
+    form = forms.UpdateProjectForm(request.POST or None, instance=project)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Success, your project profile was saved!')
+        return HttpResponseRedirect('/project/all')
+
+    context = {
+        'form' : form,
+        'page_name' : 'Edit Project',
+        'button_value' : 'Save',
+    }
+    return render(request, 'projectform.html', context)
+
 def getProjects(request):
 	del_project = request.GET.get('delete_project', -1)
 	if del_project >= 0:
