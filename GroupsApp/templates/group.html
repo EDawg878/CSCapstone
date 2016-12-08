@@ -9,7 +9,7 @@
 			<p>{{ group.description }}</p>
 			{% if userIsMember %}
 			<a href="/group/unjoin?name={{ group.name }}" class="btn btn-default">Unjoin this Group</a>
-			<a href="/group/add_project?name={{ group.name }}" class="btn btn-default">Add A Project</a>
+			<a href="/group/groupname={{ group.name }}" class="btn btn-default">Add A Project</a>
 			{% else %}
 			<a href="/group/join?name={{ group.name }}" class="btn btn-default">Join this Group</a>
 			{% endif %}
@@ -33,6 +33,17 @@
 				</tbody>
 			</table>
 		</div>
+		{% if userIsMember %}
+    	<div class="panel panel-default">
+        	<form method="post" enctype="multipart/form-data" action="/group/add_member?name={{ group.name }}" class="panel-body validate">
+        	{% csrf_token %}
+            	<label for="member">Member Email</label>
+             	<input type="text" name="member" id="member" placeholder="Member" class="form-control" data-bvalidator="required" data-bvalidator-msg="Member Email Required">
+             	<br>
+             	<input type="submit" value="Add" class="btn btn-primary">
+        	</form>
+    	</div>
+		{% endif %}
 		<div class="table-responsive">
 			<table class="table table-striped sortable">
 				<thead>

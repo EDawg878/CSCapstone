@@ -10,3 +10,5 @@ class GroupForm(forms.Form):
     description = forms.CharField(label='Description', max_length=300)
 class AddProjectForm(forms.Form):
     name = forms.ModelChoiceField(queryset=Project.objects.all())
+class AddMemberForm(forms.Form):
+    member = forms.CharField(label='Text', max_length=500)

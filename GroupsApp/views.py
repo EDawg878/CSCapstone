@@ -3,12 +3,14 @@ Created by Naman Patwari on 10/10/2016.
 """
 from django.shortcuts import render
 from django.contrib import messages
+from django.http import HttpResponseRedirect
 
 from . import models
 from . import forms
-from .forms import AddProjectForm
+from .forms import AddProjectForm, AddMemberForm
 from CommentsApp.models import Comment
 from CommentsApp.forms import CommentForm
+from AuthenticationApp.forms import MyUser
 
 def getGroups(request):
     if request.user.is_authenticated():
@@ -78,7 +80,7 @@ def joinGroup(request):
         request.user.group_set.add(in_group)
         request.user.save()
         context = {
-                     'comments' : comments_list,
+            'comments' : comments_list,
             'group' : in_group,
             'userIsMember': True,
         }
@@ -163,3 +165,18 @@ def delete_comment(request):
             }
             return render(request, 'group.html', context)
     return render(request, 'index.html')
+
+def add_member(request):
+    if request.method == 'POST':
+        form = AddMemberForm(request.POST)
+        if form.is_valid():
+            in_name = request.GET.get('name', 'None')
+            email = form.cleaned_data['member']
+            in_group = models.Group.objects.get(name__exact=in_name)
+            is_member = in_group.members.filter(email__exact=request.user.email)
+            to_add = MyUser.objects.get(email__exact=email)
+            in_group.members.add(to_add)
+            in_group.save();
+            to_add.group_set.add(in_group)
+            to_add.save()
+    return HttpResponseRedirect("/group?name="+in_name)
