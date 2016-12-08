@@ -5,6 +5,7 @@ from django.shortcuts import render
 
 from . import models
 from . import forms
+from .forms import AddProjectForm
 
 def getGroups(request):
     if request.user.is_authenticated():
@@ -83,4 +84,21 @@ def unjoinGroup(request):
         }
         return render(request, 'group.html', context)
     return render(request, 'autherror.html')
-    
+
+def add_project(request):
+    if request.user.is_authenticated():
+        in_name = request.GET.get('name', 'None')
+        in_group = models.Group.objects.get(name__exact=in_name)
+	data = {
+		'project': in_group.project,
+	}
+	form = AddProjectForm(request.POST or None)
+	if form.is_valid():
+		in_group.project = form.cleaned_data['project']
+		in_group.save()
+        context = {
+            'group' : in_group,
+            'userIsMember': True,
+        }
+        return render(request, 'group.html', context)
+    return render(request, 'autherror.html')
