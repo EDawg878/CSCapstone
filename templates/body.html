@@ -45,9 +45,13 @@
 						  Create new Group/Organization <span class="caret"></span>
 						</a>
 						<ul class="dropdown-menu">
+							{% if user.role == 'admin' %}
 							<li><a href="/company/form">Create Company</a></li>
 							<li><a href="/university/form">Create University</a></li>
+							{% endif %}
+							{% if user.role == 'student' or user.role == 'admin' %}
 							<li><a href="/group/form">Create Group</a></li>
+							{% endif %}
 						</ul>
 					</li>
 					<li><a href="/logout">Logout</a></li>
