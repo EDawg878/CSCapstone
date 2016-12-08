@@ -274,7 +274,7 @@ def view_profile(request):
 		context['teacherForm'] = teacher
 	if user.role == 'student':
 		student = Student.objects.get(user_id__exact = user.id)
-		studentForm = UpdateEngineerForm(request.POST or None, instance=engineer)
+		studentForm = UpdateStudentForm(request.POST or None, instance=student)
 		make_readonly(studentForm)
 		context['studentForm'] = studentForm
 	return render(request, 'profile.html', context)
