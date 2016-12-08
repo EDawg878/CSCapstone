@@ -18,5 +18,6 @@ urlpatterns = [
 	
 	url(r'^register_engineer$', views.register_engineer, name='RegisterEngineer'), 
 	url(r'^register_teacher$', views.register_teacher, name='RegisterTeacher'),
-	url(r'^register_student$', views.register_student, name='RegisterStudent')
+	url(r'^register_student$', views.register_student, name='RegisterStudent'),
+	url(r'^profile$', views.view_profile, name='ViewProfile'),
 ]

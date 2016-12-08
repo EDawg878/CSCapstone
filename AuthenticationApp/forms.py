@@ -46,6 +46,11 @@ class RegisterForm(forms.Form):
         except:
             raise forms.ValidationError("There was an error, please contact us later")
 
+class ProfileForm(forms.ModelForm):
+	class Meta:
+		model = MyUser
+		fields = ('email', 'first_name', 'last_name')
+
 class UpdateForm(forms.ModelForm):
     """A form for updating users. Includes all the fields on
     the user, but replaces the password field with admin's

@@ -1,0 +1,25 @@
+{% extends "body.html" %}
+
+{% block head_title %}{{ page_name }} | {% endblock %}
+
+{% block content %}
+
+<div class="container" role="main">
+	<div class="panel panel-default">
+		<form method="POST" class="panel-body validate"> {% csrf_token %}
+			<h2>Profile Page</h2>
+			{{ form.as_p }}
+			{% if 'user.role' == 'engineer' %}
+			{{ engineerForm.as_p }}
+			{% endif %}	
+			{% if 'user.role' == 'teacher' %}
+			{{ teacherForm.as_p }}
+			{% endif %}	
+			{% if 'user.role' == 'engineer' %}
+			{{ studentForm.as_p }}
+			{% endif %}	
+		</form>
+	</div>
+</div>
+
+{% endblock %}

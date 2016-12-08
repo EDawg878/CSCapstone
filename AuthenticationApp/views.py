@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from CompaniesApp.models import Engineer
 from UniversitiesApp.models import Teacher, Student
-from .forms import LoginForm, RegisterForm, UpdateForm
+from .forms import LoginForm, RegisterForm, UpdateForm, ProfileForm
 from CompaniesApp.forms import EngineerForm, UpdateEngineerForm
 from UniversitiesApp.forms import TeacherForm, UpdateTeacherForm, StudentForm, UpdateStudentForm
 from .models import MyUser
@@ -247,3 +247,34 @@ def update_student_profile(request):
 		"links" : ["logout"],
 	}
 	return render(request, 'auth_form.html', context)
+
+def make_readonly(form):
+	for key in form.fields:
+		form.fields[key].widget.attrs['readonly'] = True
+		form.fields[key].widget.attrs['disabled'] = True
+
+def view_profile(request):
+	name = request.GET.get('name', 'None')
+	user = MyUser.objects.get(email__exact=name)
+	form = ProfileForm(request.POST or None, instance=user)
+	make_readonly(form)
+	context = {
+		'form' : form,
+		'user' : user
+	}
+	if user.role == 'engineer':
+		engineer = Engineer.objects.get(user_id__exact = user.id)
+		engineerForm = UpdateEngineerForm(request.POST or None, instance=engineer)
+		make_readonly(engineerForm)
+		context['engineerForm'] = engineerForm
+	if user.role == 'teacher':
+		teacher = Teacher.objects.get(user_id__exact = user.id)
+		teacherForm = UpdateTeacherForm(request.POST or None, instance=teacher)
+		make_readonly(teacherForm)
+		context['teacherForm'] = teacher
+	if user.role == 'student':
+		student = Student.objects.get(user_id__exact = user.id)
+		studentForm = UpdateEngineerForm(request.POST or None, instance=engineer)
+		make_readonly(studentForm)
+		context['studentForm'] = studentForm
+	return render(request, 'profile.html', context)
