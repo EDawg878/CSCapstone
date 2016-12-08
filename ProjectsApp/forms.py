@@ -10,7 +10,7 @@ from tinymce.widgets import TinyMCE
 class ProjectForm(forms.Form):
     name = forms.CharField(label='Name', max_length=200)
     website = forms.CharField(label='Website', max_length=200)
-    description = forms.CharField(label='Description', max_length=1000, widget=TinyMCE(attrs={'cols' : 80, 'rows' : 10}))
+    description = forms.CharField(label='Description', max_length=1000, widget=TinyMCE(attrs={'cols' : 80, 'rows' : 10}), required=False)
     language = forms.CharField(label='Programming Language', max_length=100)
     experience = forms.IntegerField(label='Years of Experience')
     specialty = forms.CharField(label='Specialty', max_length=100)

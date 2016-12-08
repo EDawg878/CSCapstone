@@ -115,7 +115,7 @@ LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
-USE_I18N = True
+E_JS_URL = 'http://debug.example.org/tiny_mce/tiny_mce_src.js'
 
 USE_L10N = True
 
@@ -135,3 +135,12 @@ AUTH_USER_MODEL = 'AuthenticationApp.MyUser'
 
 #Use @login_required for functions that require authenticated users
 LOGIN_URL = "/login"
+
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "table,spellchecker,paste,searchreplace",
+    'theme': "advanced",
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 10,
+}
+TINYMCE_SPELLCHECKER = True
+TINYMCE_COMPRESSOR = True
