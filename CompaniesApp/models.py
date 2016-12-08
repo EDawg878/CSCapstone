@@ -25,6 +25,7 @@ class Engineer(models.Model):
 		on_delete=models.CASCADE,
 		primary_key=True)
 
+	company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True)
 	alma_mater = models.CharField(max_length=50)
 	about = models.CharField(max_length=300)
 	phone_number = models.CharField(max_length=20)

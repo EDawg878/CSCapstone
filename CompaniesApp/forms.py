@@ -4,7 +4,7 @@ CompaniesApp Forms
 Created by Jacob Dunbar on 10/3/2016.
 """
 from django import forms
-from .models import Engineer
+from .models import Engineer, Company
 
 class CompanyForm(forms.Form):
     name = forms.CharField(label='Name', max_length=30)
@@ -13,6 +13,7 @@ class CompanyForm(forms.Form):
     website = forms.CharField(label='Website', max_length = 300)
 
 class EngineerForm(forms.Form):
+	company = forms.ModelChoiceField(queryset=Company.objects.all())
 	alma_mater = forms.CharField(label='Alma Mater', max_length=50)
 	about = forms.CharField(label='About', max_length=300)
 	phone_number = forms.CharField(label='Phone Number', max_length=20)
@@ -20,4 +21,4 @@ class EngineerForm(forms.Form):
 class UpdateEngineerForm(forms.ModelForm):
 	class Meta:
 		model = Engineer
-		fields = ('alma_mater', 'about', 'phone_number')
+		fields = ('company', 'alma_mater', 'about', 'phone_number')
