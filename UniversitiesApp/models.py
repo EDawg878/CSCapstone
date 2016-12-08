@@ -33,6 +33,7 @@ class Teacher(models.Model):
 		on_delete=models.CASCADE,
 		primary_key=True)
 
+	university = models.ForeignKey(University, on_delete=models.CASCADE, null=True)
 	subject = models.CharField(max_length=200)
 	about = models.CharField(max_length=300)
 	phone_number = models.CharField(max_length=20)

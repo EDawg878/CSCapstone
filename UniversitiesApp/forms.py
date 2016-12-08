@@ -4,7 +4,7 @@ UniversitiesApp Forms
 Created by Jacob Dunbar on 11/5/2016.
 """
 from django import forms
-from .models import Teacher
+from .models import Teacher, University
 
 class UniversityForm(forms.Form):
     name = forms.CharField(label='Name', max_length=50)
@@ -18,11 +18,13 @@ class CourseForm(forms.Form):
 	description = forms.CharField(label='Description', max_length=300)
 
 class TeacherForm(forms.Form):
-	subject = forms.CharField(label='subject', max_length=200)
+	university = forms.ModelChoiceField(queryset=University.objects.all())
+	subject = forms.CharField(label='Subject', max_length=200)
 	about = forms.CharField(label='About', max_length=300)
 	phone_number = forms.CharField(label='Phone Number', max_length=20)
 
 class UpdateTeacherForm(forms.ModelForm):
 	class Meta:
 		model = Teacher
-		fields = ('subject', 'about', 'phone_number')
+		fields = ('university', 'subject', 'about', 'phone_number')
+

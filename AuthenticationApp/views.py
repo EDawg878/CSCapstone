@@ -10,7 +10,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from CompaniesApp.models import Engineer
 from UniversitiesApp.models import Teacher
-from .forms import LoginForm, RegisterForm, UpdateForm, StudentForm
+from .forms import LoginForm, RegisterForm, UpdateForm
 from CompaniesApp.forms import EngineerForm, UpdateEngineerForm
 from UniversitiesApp.forms import TeacherForm, UpdateTeacherForm
 from .models import MyUser, Student
@@ -67,7 +67,8 @@ def auth_register(request):
 			return HttpResponseRedirect("/register_engineer")
 		elif form.cleaned_data['role'] == 'student':
 			request.session['role'] = 'student'
-			return HttpResponseRedirect("/register_student")
+			register_student(request)
+			#return HttpResponseRedirect("/register_student")
 		else:
 			return render(request, 'index.html')
 
@@ -130,6 +131,7 @@ def register_teacher(request):
 		new_user.save()
 		new_teacher = Teacher(
 			user=new_user,
+			university=form.cleaned_data['university'],
 			subject=form.cleaned_data['subject'],
 			about=form.cleaned_data['about'],
 			phone_number=form.cleaned_data['phone_number']
@@ -152,25 +154,24 @@ def register_student(request):
 			'role' not in request.session,
 			request.session['role'] != 'student']):		
 		return HttpResponseRedirect("/")
-		messages.success(request, 'we got a')
 
 	last_form = request.session['form']
-	form = StudentForm(request.POST or None)
-	if form.is_valid():
-		new_user = MyUser.objects.create_user(
-			email=last_form['email'], 
-			password=last_form["password2"], 
-			first_name=last_form['first_name'],
-			last_name=last_form['last_name'],
-			role=last_form['role']
-			)
-		messages.success(request, last_form['email'] + ' saved')
-		new_user.save()
-		new_student = Student(user=new_user)
-		new_student.save()	
-		login(request, new_user);	
-		messages.success(request, 'Success! Your student account was created.')
-		return render(request, 'index.html')
+	#form = StudentForm(request.POST or None)
+	#if form.is_valid():
+	new_user = MyUser.objects.create_user(
+	email=last_form['email'], 
+		password=last_form["password2"], 
+		first_name=last_form['first_name'],
+		last_name=last_form['last_name'],
+		role=last_form['role']
+		)
+	messages.success(request, last_form['email'] + ' saved')
+	new_user.save()
+	new_student = Student(user=new_user)
+	new_student.save()	
+	login(request, new_user);	
+	messages.success(request, 'Success! Your student account was created.')
+	return render(request, 'index.html')
 
 	context = {
 		"form": form,

@@ -8,9 +8,6 @@ from .models import MyUser
 from CompaniesApp.models import Engineer
 from UniversitiesApp.models import Teacher
 
-class StudentForm(forms.Form):
-    pass
-
 class LoginForm(forms.Form):
     email = forms.CharField(label='Email')
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
