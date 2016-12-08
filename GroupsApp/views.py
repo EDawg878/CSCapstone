@@ -168,15 +168,26 @@ def delete_comment(request):
 
 def add_member(request):
     if request.method == 'POST':
+        in_name = request.GET.get('name', 'None')
         form = AddMemberForm(request.POST)
         if form.is_valid():
-            in_name = request.GET.get('name', 'None')
             email = form.cleaned_data['member']
             in_group = models.Group.objects.get(name__exact=in_name)
-            is_member = in_group.members.filter(email__exact=request.user.email)
-            to_add = MyUser.objects.get(email__exact=email)
-            in_group.members.add(to_add)
-            in_group.save();
-            to_add.group_set.add(in_group)
-            to_add.save()
-    return HttpResponseRedirect("/group?name="+in_name)
+            is_member = in_group.members.filter(email=request.user.email)
+            if is_member.exists() or request.user.role == 'admin':
+                to_add = MyUser.objects.filter(email__exact=email)
+                if to_add.exists():
+                    to_add = to_add[0]
+                    if to_add.role == 'student':
+                        in_group.members.add(to_add)
+                        in_group.save()
+                        to_add.group_set.add(in_group)
+                        to_add.save()
+                    else:
+                        messages.warning(request, 'User must be a student to be added to the group')
+                else:
+                    messages.warning(request, 'Email not found')
+            else:
+                messages.warning(request, 'You must be a member of the group to add others')  
+        return HttpResponseRedirect("/group?name="+in_name)
+    return HttpResponseRedirect("/group/all")
