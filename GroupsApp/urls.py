@@ -15,6 +15,5 @@ urlpatterns = [
     url(r'^group$', views.getGroup, name='Group'),
     url(r'^group/add_project$', views.add_project, name='GAddProject'),
     url(r'^group/add_comment$', views.add_comment, name='GroupAddComment'),
-    url(r'^group/delete_comment$', views.delete_comment, name='GroupDeleteComment'),
-    url(r'^group/delete_group$', views.delete_group, name='GDeleteGroup')
+    url(r'^group/delete_comment$', views.delete_comment, name='GroupDeleteComment')
 ]

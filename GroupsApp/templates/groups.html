@@ -17,7 +17,9 @@
 					<tr>
 						<td><a href="/group?name={{ item.name }}">{{ item.name }}</a></td>
 						<td>{{ item.description }}</td>
-						<td><a href="/group/delete_group" class="btn btn-default">Delete Group</a>
+						{% if user.role == 'admin' or user.role == 'student' %}
+						<td><a href="/group/all?delete_group={{ item.id }}" class="btn btn-default">Delete Group</a>
+						{% endif %}
 					</tr>
 					{% endfor %}
 				</tbody>
