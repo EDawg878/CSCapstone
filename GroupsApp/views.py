@@ -134,3 +134,24 @@ def add_comment(request):
         else:
             form = CommentForm()
     return render(request, 'group.html')
+
+def delete_group(request):
+    if request.user.is_authenticated():
+        if request.method == 'POST':
+            form = forms.GroupForm(request.POST)
+            if form.is_valid():
+                if models.Group.objects.filter(name__exact=form.cleaned_data['name']).exists():
+		    models.Group.objects.filter(name__exact=form.cleaned_data['name']).delete()
+		    groups_list = models.Group.objects.all()
+        	    context = {
+                       	'groups' : groups_list
+                    }
+		    return render(request, 'groups.html', context)
+		else:
+                    return render(request, 'groups.html', {'error' : 'Error: That Group name already exists!'})
+
+        else:
+          return render(request, 'groups.html')
+    # render error page if user is not logged in
+    return render(request, 'autherror.html')
+
