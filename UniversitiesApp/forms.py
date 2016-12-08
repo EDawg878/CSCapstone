@@ -31,8 +31,12 @@ class UpdateTeacherForm(forms.ModelForm):
 class StudentForm(forms.Form):
 	university = forms.ModelChoiceField(queryset=University.objects.all())
 	class_standing = forms.CharField(label='Class Standing', max_length=20)
+	language = forms.CharField(label='Programming Language', max_length=100)
+	experience = forms.IntegerField(label='Years of Experience')
+	specialty = forms.CharField(label='Specialty', max_length=100)
+
 
 class UpdateStudentForm(forms.ModelForm):
 	class Meta:
 		model = Student
-		fields = ('university', 'class_standing')
+		fields = ('university', 'class_standing', 'language', 'experience', 'specialty')

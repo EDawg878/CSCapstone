@@ -49,6 +49,9 @@ class Student(models.Model):
 	
     university = models.ForeignKey(University, on_delete=models.CASCADE, null=True)
     class_standing = models.CharField(max_length=20, null=True)
+    language = models.CharField(max_length=200, null=True)
+    experience = models.IntegerField(null=True)
+    specialty = models.CharField(max_length=200, null=True)
 
     def get_full_name(self):        
         return "%s %s" %(self.user.first_name, self.user.last_name)
