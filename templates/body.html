@@ -39,6 +39,7 @@
 							<li><a href="/company/all">Companies</a></li>
 							<li><a href="/university/all">Universities</a></li>
 							<li><a href="/group/all">Groups</a></li>
+							<li><a href="/project/all">Projects</a></li>
 						</ul>
 					</li>
 					<li role="presentation" class="dropdown">
@@ -52,6 +53,9 @@
 							{% endif %}
 							{% if user.role == 'student' or user.role == 'admin' %}
 							<li><a href="/group/form">Create Group</a></li>
+							{% endif %}
+							{% if user.role == 'engineer' or user.role == 'admin' %}
+							<li><a href="/project/form">Create Project</a></li>
 							{% endif %}
 						</ul>
 					</li>

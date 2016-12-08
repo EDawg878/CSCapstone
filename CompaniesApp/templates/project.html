@@ -4,13 +4,14 @@
 	<!-- Content -->
     <div class="container theme-showcase" role="main">
 		<div class="jumbotron">
-			<h3>{{ project.name }}</h3>
-			<p>{{ project.description }}</p>
-            <h5><a href="{{ project.website }}">Website</a></h5>
+            <img src="/{{ company.photo }}" alt="Company Image" width=150/>
+			<h3>{{ company.name }}</h3>
+			<p>{{ company.description }}</p>
+            <h5><a href="{{ company.website }}">Website</a></h5>
             {% if userIsMember %}
-            <a href="/project/unjoin?name={{ project.name }}" class="btn btn-default">Unjoin this Project</a>
+            <a href="/company/unjoin?name={{ company.name }}" class="btn btn-default">Unjoin this Company</a>
             {% else %}
-            <a href="/project/join?name={{ project.name }}" class="btn btn-default">Join this Project</a>
+            <a href="/company/join?name={{ company.name }}" class="btn btn-default">Join this Company</a>
             {% endif %}
 		</div>
     </div>
@@ -23,7 +24,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in project.members.all %}
+                        {% for item in company.members.all %}
                         <tr>
                             <td>{{ item.get_full_name }}</td>
                         </tr>
@@ -33,4 +34,3 @@
             </div>
         </div>
 {% endblock %}
-
