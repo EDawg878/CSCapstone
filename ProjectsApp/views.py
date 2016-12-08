@@ -56,8 +56,8 @@ def getProjects(request):
 	
 	projects_list = models.Project.objects.all()
 	return render(request, 'projects.html', {
-        'projects': projects_list,
-    })
+		'projects': projects_list,
+	})
 
 def getProject(request):
 	name = request.GET.get('name', 'None')

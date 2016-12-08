@@ -5,7 +5,9 @@
     <div class="container theme-showcase" role="main">
 		<div class="jumbotron">
 			<h3>{{ project.name }}</h3>
+			{% autoescape off %}
 			<p>{{ project.description }}</p>
+			{% endautoescape %}
             <h5><a href="{{ project.website }}">Website</a></h5>
             {% if userIsMember %}
             <a href="/project/unjoin?name={{ project.name }}" class="btn btn-default">Unjoin this Project</a>
