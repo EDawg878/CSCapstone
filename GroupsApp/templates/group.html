@@ -46,6 +46,9 @@
 					<tr>
 						<td>{{ item.time }}</td>
 						<td>{{ item.comment }}</td>
+						{% if user.role == 'admin' or user.id == item.comment.user_id %}
+						<td><a href="/group?name={{ group.name }}&delete_comment={{ item.id }}" class="btn btn-default">Delete Comment</a></td>
+						{% endif %}
 					</tr>
 					{% endfor %}
 				<tbody>

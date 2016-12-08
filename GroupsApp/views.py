@@ -2,6 +2,7 @@
 Created by Naman Patwari on 10/10/2016.
 """
 from django.shortcuts import render
+from django.contrib import messages
 
 from . import models
 from . import forms
@@ -17,10 +18,14 @@ def getGroups(request):
         }
         return render(request, 'groups.html', context)
     # render error page if user is not logged in
-    return render(request, 'autherror.html')
+        return render(request, 'autherror.html')
 
 def getGroup(request):
     if request.user.is_authenticated():
+        del_comment = request.GET.get('delete_comment', -1)
+        if del_comment >= 0:
+            return delete_comment(request)
+
         in_name = request.GET.get('name', 'None')
         in_group = models.Group.objects.get(name__exact=in_name)
         is_member = in_group.members.filter(email__exact=request.user.email)
@@ -28,7 +33,7 @@ def getGroup(request):
         context = {
             'group' : in_group,
             'userIsMember': is_member,
-			'comments' : comments_list
+            'comments' : comments_list
         }
         return render(request, 'group.html', context)
     # render error page if user is not logged in
@@ -69,7 +74,7 @@ def joinGroup(request):
         request.user.group_set.add(in_group)
         request.user.save()
         context = {
-			'comments' : comments_list,
+                     'comments' : comments_list,
             'group' : in_group,
             'userIsMember': True,
         }
@@ -86,7 +91,7 @@ def unjoinGroup(request):
         request.user.save()
         comments_list = Comment.objects.filter(group_id = in_group.id)
         context = {
-			'comments': comments_list,
+                     'comments': comments_list,
             'group' : in_group,
             'userIsMember': False,
         }
@@ -97,16 +102,16 @@ def add_project(request):
     if request.user.is_authenticated():
         in_name = request.GET.get('name', 'None')
         in_group = models.Group.objects.get(name__exact=in_name)
-	data = {
-		'project': in_group.project,
-	}
-	form = AddProjectForm(request.POST or None)
-	if form.is_valid():
-		in_group.project = form.cleaned_data['project']
-		in_group.save()
+        data = {
+               'project': in_group.project,
+        }
+        form = AddProjectForm(request.POST or None)
+        if form.is_valid():
+               in_group.project = form.cleaned_data['project']
+               in_group.save()
         comments_list = Comment.objects.filter(group_id = in_group.id)
         context = {
-			'comments' : comments_list,
+                     'comments' : comments_list,
             'group' : in_group,
             'userIsMember': True,
         }
@@ -117,23 +122,43 @@ def add_comment(request):
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
-       	    in_name = request.GET.get('name', 'None')
+            in_name = request.GET.get('name', 'None')
             in_group = models.Group.objects.get(name__exact=in_name)
             is_member = in_group.members.filter(email__exact=request.user.email)
             new_comment = Comment(
-				group = in_group, 
-				comment=form.cleaned_data['comment'])
+                          user = request.user,
+                          group = in_group, 
+                          comment=form.cleaned_data['comment'])
             new_comment.save()
-    	    comments_list = Comment.objects.filter(group_id = in_group.id)
+            comments_list = Comment.objects.filter(group_id = in_group.id)
             context = {
               'group' : in_group,
               'userIsMember': is_member,
-		      'comments' : comments_list
+                     'comments' : comments_list
             }
             return render(request, 'group.html', context)
         else:
             form = CommentForm()
     return render(request, 'group.html')
+
+def delete_comment(request):
+    if request.user.is_authenticated():
+        in_name = request.GET.get('name', 'None')
+        in_group = models.Group.objects.get(name__exact=in_name)
+        is_member = in_group.members.filter(email__exact=request.user.email)
+        comment_id = request.GET.get('delete_comment', -1)
+        comment = Comment.objects.get(id__exact=comment_id)
+        if request.user.role == 'admin' or comment.user_id == request.user.id:
+            comment.delete()
+            messages.success(request, 'Deleted comment')
+            comments_list = Comment.objects.filter(group_id = in_group.id)
+            context = {
+                'group' : in_group,
+                'userIsMember': is_member,
+                'comments' : comments_list
+            }
+            return render(request, 'group.html', context)
+    return render(request, 'index.html')
 
 def delete_group(request):
     if request.user.is_authenticated():
@@ -141,14 +166,14 @@ def delete_group(request):
             form = forms.GroupForm(request.POST)
             if form.is_valid():
                 if models.Group.objects.filter(name__exact=form.cleaned_data['name']).exists():
-		    models.Group.objects.filter(name__exact=form.cleaned_data['name']).delete()
-		    groups_list = models.Group.objects.all()
-        	    context = {
-                       	'groups' : groups_list
-                    }
-		    return render(request, 'groups.html', context)
-		else:
-                    return render(request, 'groups.html', {'error' : 'Error: That Group name already exists!'})
+                   models.Group.objects.filter(name__exact=form.cleaned_data['name']).delete()
+                   groups_list = models.Group.objects.all()
+                   context = {
+                        'groups' : groups_list
+                   }
+                   return render(request, 'groups.html', context)
+            else:
+                   return render(request, 'groups.html', {'error' : 'Error: That Group name already exists!'})
 
         else:
           return render(request, 'groups.html')
