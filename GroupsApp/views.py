@@ -24,7 +24,7 @@ def getGroup(request):
         in_name = request.GET.get('name', 'None')
         in_group = models.Group.objects.get(name__exact=in_name)
         is_member = in_group.members.filter(email__exact=request.user.email)
-    	comments_list = Comment.objects.all()
+        comments_list = Comment.objects.filter(group_id = in_group.id)
         context = {
             'group' : in_group,
             'userIsMember': is_member,
@@ -65,7 +65,7 @@ def joinGroup(request):
         in_group = models.Group.objects.get(name__exact=in_name)
         in_group.members.add(request.user)
         in_group.save();
-    	comments_list = Comment.objects.all()
+        comments_list = Comment.objects.filter(group_id = in_group.id)
         request.user.group_set.add(in_group)
         request.user.save()
         context = {
@@ -84,7 +84,7 @@ def unjoinGroup(request):
         in_group.save();
         request.user.group_set.remove(in_group)
         request.user.save()
-    	comments_list = Comment.objects.all()
+        comments_list = Comment.objects.filter(group_id = in_group.id)
         context = {
 			'comments': comments_list,
             'group' : in_group,
@@ -104,7 +104,7 @@ def add_project(request):
 	if form.is_valid():
 		in_group.project = form.cleaned_data['project']
 		in_group.save()
-    	comments_list = Comment.objects.all()
+        comments_list = Comment.objects.filter(group_id = in_group.id)
         context = {
 			'comments' : comments_list,
             'group' : in_group,
@@ -117,13 +117,14 @@ def add_comment(request):
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
-            new_comment = Comment(comment=form.cleaned_data['comment'])
-            new_comment.save()
-            comments_list = Comment.objects.all()
        	    in_name = request.GET.get('name', 'None')
             in_group = models.Group.objects.get(name__exact=in_name)
             is_member = in_group.members.filter(email__exact=request.user.email)
-    	    comments_list = Comment.objects.all()
+            new_comment = Comment(
+				group = in_group, 
+				comment=form.cleaned_data['comment'])
+            new_comment.save()
+    	    comments_list = Comment.objects.filter(group_id = in_group.id)
             context = {
               'group' : in_group,
               'userIsMember': is_member,
