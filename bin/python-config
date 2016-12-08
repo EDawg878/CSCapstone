@@ -1,4 +1,4 @@
-#!/home/flekaty123/Desktop/cs390-python/CSCapstone/bin/python
+#!/Users/eric/CSCapstone/bin/python
 
 import sys
 import getopt
