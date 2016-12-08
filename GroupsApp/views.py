@@ -65,9 +65,11 @@ def joinGroup(request):
         in_group = models.Group.objects.get(name__exact=in_name)
         in_group.members.add(request.user)
         in_group.save();
+    	comments_list = Comment.objects.all()
         request.user.group_set.add(in_group)
         request.user.save()
         context = {
+			'comments' : comments_list,
             'group' : in_group,
             'userIsMember': True,
         }
@@ -82,7 +84,9 @@ def unjoinGroup(request):
         in_group.save();
         request.user.group_set.remove(in_group)
         request.user.save()
+    	comments_list = Comment.objects.all()
         context = {
+			'comments': comments_list,
             'group' : in_group,
             'userIsMember': False,
         }
@@ -100,7 +104,9 @@ def add_project(request):
 	if form.is_valid():
 		in_group.project = form.cleaned_data['project']
 		in_group.save()
+    	comments_list = Comment.objects.all()
         context = {
+			'comments' : comments_list,
             'group' : in_group,
             'userIsMember': True,
         }
