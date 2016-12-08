@@ -17,6 +17,9 @@
                     <tr>
                         <td><a href="/project?name={{ item.name }}">{{ item.name }}</a></td>
                         <td>{{ item.description }}</td>
+						{% if user.role == 'admin' or user.role == 'engineer' %}
+						<td><a href="/project/all?delete_project={{ item.id }}" class="btn btn-default">Delete Project</a>
+						{% endif %}
                     </tr>
                     {% endfor %}
 				</tbody>

@@ -33,6 +33,11 @@ def getProjectForm(request):
 	return render(request, 'autherror.html')
 
 def getProjects(request):
+	del_project = request.GET.get('delete_project', -1)
+	if del_project >= 0:
+		models.Project.objects.get(id__exact=del_project).delete()
+		messages.success(request, 'Deleted project')
+	
 	projects_list = models.Project.objects.all()
 	return render(request, 'projects.html', {
         'projects': projects_list,
