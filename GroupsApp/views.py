@@ -6,12 +6,14 @@ from django.shortcuts import render
 from . import models
 from . import forms
 from .forms import AddProjectForm
+from CommentsApp.models import Comment
+from CommentsApp.forms import CommentForm
 
 def getGroups(request):
     if request.user.is_authenticated():
         groups_list = models.Group.objects.all()
         context = {
-            'groups' : groups_list,
+           'groups' : groups_list
         }
         return render(request, 'groups.html', context)
     # render error page if user is not logged in
@@ -22,9 +24,11 @@ def getGroup(request):
         in_name = request.GET.get('name', 'None')
         in_group = models.Group.objects.get(name__exact=in_name)
         is_member = in_group.members.filter(email__exact=request.user.email)
+    	comments_list = Comment.objects.all()
         context = {
             'group' : in_group,
             'userIsMember': is_member,
+			'comments' : comments_list
         }
         return render(request, 'group.html', context)
     # render error page if user is not logged in
@@ -102,3 +106,24 @@ def add_project(request):
         }
         return render(request, 'group.html', context)
     return render(request, 'autherror.html')
+
+def add_comment(request):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            new_comment = Comment(comment=form.cleaned_data['comment'])
+            new_comment.save()
+            comments_list = Comment.objects.all()
+       	    in_name = request.GET.get('name', 'None')
+            in_group = models.Group.objects.get(name__exact=in_name)
+            is_member = in_group.members.filter(email__exact=request.user.email)
+    	    comments_list = Comment.objects.all()
+            context = {
+              'group' : in_group,
+              'userIsMember': is_member,
+		      'comments' : comments_list
+            }
+            return render(request, 'group.html', context)
+        else:
+            form = CommentForm()
+    return render(request, 'group.html')
