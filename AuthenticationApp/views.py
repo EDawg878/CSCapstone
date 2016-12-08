@@ -9,11 +9,11 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from CompaniesApp.models import Engineer
-from UniversitiesApp.models import Teacher
+from UniversitiesApp.models import Teacher, Student
 from .forms import LoginForm, RegisterForm, UpdateForm
 from CompaniesApp.forms import EngineerForm, UpdateEngineerForm
-from UniversitiesApp.forms import TeacherForm, UpdateTeacherForm
-from .models import MyUser, Student
+from UniversitiesApp.forms import TeacherForm, UpdateTeacherForm, StudentForm, UpdateStudentForm
+from .models import MyUser
 
 # Auth Views
 
@@ -67,8 +67,7 @@ def auth_register(request):
 			return HttpResponseRedirect("/register_engineer")
 		elif form.cleaned_data['role'] == 'student':
 			request.session['role'] = 'student'
-			register_student(request)
-			#return HttpResponseRedirect("/register_student")
+			return HttpResponseRedirect("/register_student")
 		else:
 			return render(request, 'index.html')
 
@@ -156,22 +155,26 @@ def register_student(request):
 		return HttpResponseRedirect("/")
 
 	last_form = request.session['form']
-	#form = StudentForm(request.POST or None)
-	#if form.is_valid():
-	new_user = MyUser.objects.create_user(
-	email=last_form['email'], 
-		password=last_form["password2"], 
-		first_name=last_form['first_name'],
-		last_name=last_form['last_name'],
-		role=last_form['role']
+	form = StudentForm(request.POST or None)
+	if form.is_valid():
+		new_user = MyUser.objects.create_user(
+			email=last_form['email'], 
+			password=last_form["password2"], 
+			first_name=last_form['first_name'],
+			last_name=last_form['last_name'],
+			role=last_form['role']
 		)
-	messages.success(request, last_form['email'] + ' saved')
-	new_user.save()
-	new_student = Student(user=new_user)
-	new_student.save()	
-	login(request, new_user);	
-	messages.success(request, 'Success! Your student account was created.')
-	return render(request, 'index.html')
+		messages.success(request, last_form['email'] + ' saved')
+		new_user.save()
+		new_student = Student(
+			user=new_user,
+			university=form.cleaned_data['university'],
+			class_standing=form.cleaned_data['class_standing']
+		)
+		new_student.save()	
+		login(request, new_user);	
+		messages.success(request, 'Success! Your student account was created.')
+		return render(request, 'index.html')
 
 	context = {
 		"form": form,
@@ -220,6 +223,22 @@ def update_teacher_profile(request):
 	if form.is_valid():
 		form.save()
 		messages.success(request, 'Success, your teacher profile was saved!')
+
+	context = {
+		"form": form,
+		"page_name" : "Update",
+		"button_value" : "Update",
+		"links" : ["logout"],
+	}
+	return render(request, 'auth_form.html', context)
+
+@login_required
+def update_student_profile(request):
+	student = Student.objects.filter(user_id = request.user.id)[0]
+	form = UpdateStudentForm(request.POST or None, instance=student)
+	if form.is_valid():
+		form.save()
+		messages.success(request, 'Success, your student profile was saved!')
 
 	context = {
 		"form": form,

@@ -26,6 +26,9 @@
 					{% if user.role == 'teacher' %}
 					<li><a href="/update_teacher">Update Teacher Profile</a></li>
 					{% endif %}
+					{% if user.role == 'student' %}
+					<li><a href="/update_student">Update Student Profile</a></li>
+					{% endif %}
 					<li><a href="/update">Update Profile</a></li>
 					<li role="presentation" class="dropdown">
 						<a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">

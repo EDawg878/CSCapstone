@@ -102,31 +102,3 @@ class MyUser(AbstractBaseUser):
 # post_save.connect(new_user_reciever, sender=MyUser)
              
 
-class Student(models.Model):
-    user = models.OneToOneField(
-        MyUser,
-        on_delete=models.CASCADE,
-        primary_key=True)
-
-    def get_full_name(self):        
-        return "%s %s" %(self.user.first_name, self.user.last_name)
-
-    def get_short_name(self):        
-        return self.user.first_name
-
-    def __str__(self):              #Python 3
-        return self.user.email
-
-    def __unicode__(self):           # Python 2
-        return self.user.email
-
-    def has_perm(self, perm, obj=None):
-        return True
-
-    def has_module_perms(self, app_label):        
-        return True
-
-
-    @property
-    def is_staff(self):
-        return False
