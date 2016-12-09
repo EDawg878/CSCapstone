@@ -12,3 +12,5 @@ class AddProjectForm(forms.Form):
     name = forms.ModelChoiceField(queryset=Project.objects.all())
 class AddMemberForm(forms.Form):
     member = forms.CharField(label='Text', max_length=500)
+class SetProjectForm(forms.Form):
+    project = forms.CharField(label='Text', max_length=500)

@@ -6,10 +6,10 @@
 	<div class="container theme-showcase" role="main">
 		<div class="jumbotron">
 			<h1>{{ group.name }}</h1>
+			<h3>Current Project: <a href="/project?name={{ group.project.name }}">{{ group.project.name }}</a></h3>
 			<p>{{ group.description }}</p>
 			{% if userIsMember %}
 			<a href="/group/unjoin?name={{ group.name }}" class="btn btn-default">Unjoin this Group</a>
-			<a href="/group/groupname={{ group.name }}" class="btn btn-default">Add A Project</a>
 			{% else %}
 			<a href="/group/join?name={{ group.name }}" class="btn btn-default">Join this Group</a>
 			{% endif %}
@@ -17,6 +17,17 @@
 	</div>
 	
 	<div class="container">
+		{% if userIsMember %}
+    	<div class="panel panel-default">
+        	<form method="post" enctype="multipart/form-data" action="/group/set_project?name={{ group.name }}" class="panel-body validate">
+        		{% csrf_token %}
+            	<label for="project">Set Project</label>
+             	<input type="text" name="project" id="project" placeholder="Project" class="form-control" data-bvalidator="required" data-bvalidator-msg="Project Name Required">
+             	<br>
+             	<input type="submit" value="Set" class="btn btn-primary">
+        	</form>
+    	</div>
+		{% endif %}
 		<div class="table-responsive">
 			<table class="table table-striped sortable">
 				<thead>

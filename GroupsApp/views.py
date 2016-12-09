@@ -7,10 +7,11 @@ from django.http import HttpResponseRedirect
 
 from . import models
 from . import forms
-from .forms import AddProjectForm, AddMemberForm
+from .forms import AddProjectForm, AddMemberForm, SetProjectForm
 from CommentsApp.models import Comment
 from CommentsApp.forms import CommentForm
 from AuthenticationApp.forms import MyUser
+from ProjectsApp.models import Project
 
 def getGroups(request):
     if request.user.is_authenticated():
@@ -24,7 +25,7 @@ def getGroups(request):
         }
         return render(request, 'groups.html', context)
     # render error page if user is not logged in
-        return render(request, 'autherror.html')
+    return render(request, 'autherror.html')
 
 def getGroup(request):
     if request.user.is_authenticated():
@@ -189,5 +190,27 @@ def add_member(request):
                     messages.warning(request, 'Email not found')
             else:
                 messages.warning(request, 'You must be a member of the group to add others')  
+        return HttpResponseRedirect("/group?name="+in_name)
+    return HttpResponseRedirect("/group/all")
+
+def set_project(request):
+    if request.method == 'POST':
+        in_name = request.GET.get('name', 'None')
+        form = SetProjectForm(request.POST)
+        if form.is_valid():
+            project = form.cleaned_data['project']
+            in_group = models.Group.objects.get(name__exact=in_name)
+            is_member = in_group.members.filter(email=request.user.email)
+            if is_member.exists() or request.user.role == 'admin':
+                to_add = Project.objects.filter(name__exact=project)
+                if to_add.exists():
+                    to_add = to_add[0]
+                    in_group.project = to_add
+                    in_group.save()
+                    messages.success(request, 'Group project has been updated')
+                else:
+                    messages.warning(request, 'Project not found')
+            else:
+                messages.warning(request, 'You must be a member of the group to set the project') 
         return HttpResponseRedirect("/group?name="+in_name)
     return HttpResponseRedirect("/group/all")
