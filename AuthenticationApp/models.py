@@ -35,6 +35,9 @@ class MyUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+class Bookmark(models.Model):
+    project_name = models.CharField(max_length=200, null=True)
+
 class MyUser(AbstractBaseUser):
     email = models.EmailField(
         verbose_name='email address',
@@ -59,6 +62,8 @@ class MyUser(AbstractBaseUser):
     	null=True,
     	blank=True
     	)
+
+    bookmarks = models.ManyToManyField(Bookmark)
 
     is_active = models.BooleanField(default=True,)
     is_admin = models.BooleanField(default=False,)

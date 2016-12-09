@@ -1,0 +1,26 @@
+{% extends "body.html" %}
+
+{% block content %}
+	<!-- Content -->
+    <div class="container" role="main">
+            <div class="table-responsive">
+                <table class="table table-striped sortable">
+                    <thead>
+                        <tr>
+                            <th>Bookmarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in user.bookmarks.all %}
+                        <tr>
+                            <td>{{ item.project_name }}</td>
+							<td><a href="/project?name={{ item.project_name }}" class="btn btn-default">View</a></td>
+							<td><a href="/bookmarks?delete_bookmark={{ item.project_name }}" class="btn btn-default">Delete</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+{% endblock %}
+

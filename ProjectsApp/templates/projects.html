@@ -20,8 +20,9 @@
                         <td>{{ item.description }}</td>
 						{% endautoescape %}
 						{% if user.role == 'admin' or user.role == 'engineer' %}
-						<td><a href="/project/edit?project={{ item.id }}" class="btn btn-default">Edit Project</a>
-						<td><a href="/project/all?delete_project={{ item.id }}" class="btn btn-default">Delete Project</a>
+						<td><a href="/project/edit?project={{ item.id }}" class="btn btn-default">Edit</a></td>
+						<td><a href="/project/all?delete_project={{ item.id }}" class="btn btn-default">Delete</a></td>
+						<td><a href="/project/all?bookmark_project={{ item.id }}" class="btn btn-default">Bookmark</a></td>
 						{% endif %}
                     </tr>
                     {% endfor %}

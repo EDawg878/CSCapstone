@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect
 
 from . import models
 from . import forms
+from AuthenticationApp.models import Bookmark
 
 def getProjectForm(request):
 	if request.user.is_authenticated():
@@ -50,9 +51,18 @@ def editProject(request):
 
 def getProjects(request):
 	del_project = request.GET.get('delete_project', -1)
+	bookmark_project = request.GET.get('bookmark_project', -1)
 	if del_project >= 0:
 		models.Project.objects.get(id__exact=del_project).delete()
 		messages.success(request, 'Deleted project')
+
+	if bookmark_project >= 0:
+		project = models.Project.objects.get(id__exact=bookmark_project)
+		bookmark = Bookmark(project_name=project.name)
+		bookmark.save()
+		request.user.bookmarks.add(bookmark)
+		request.user.save()
+		messages.success(request, 'Added bookmark')
 	
 	projects_list = models.Project.objects.all()
 	return render(request, 'projects.html', {
@@ -68,6 +78,19 @@ def getProject(request):
 		'userIsMember' : is_member
 	}
 	return render(request, 'project.html', context)
+
+def viewBookmarks(request):
+	del_bookmark = request.GET.get('delete_bookmark', 'None')
+	if del_bookmark != 'None':
+		bookmark = Bookmark.objects.get(project_name=del_bookmark)
+		request.user.bookmarks.remove(bookmark)
+		request.user.save()
+		messages.success(request, 'Bookmark deleted')
+	
+	context = {
+		"user" : request.user
+	}
+	return render(request, 'bookmarks.html', context)
 
 def joinProject(request):
 	if request.user.is_authenticated():

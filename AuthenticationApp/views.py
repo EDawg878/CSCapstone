@@ -184,7 +184,6 @@ def register_student(request):
 	}
 	return render(request, 'auth_form.html', context)
 
-
 @login_required
 def update_profile(request):
 	form = UpdateForm(request.POST or None, instance=request.user)
