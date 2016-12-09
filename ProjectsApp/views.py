@@ -82,9 +82,10 @@ def getProject(request):
 def viewBookmarks(request):
 	del_bookmark = request.GET.get('delete_bookmark', 'None')
 	if del_bookmark != 'None':
-		bookmark = Bookmark.objects.get(project_name=del_bookmark)
-		request.user.bookmarks.remove(bookmark)
-		request.user.save()
+		bookmarks = Bookmark.objects.filter(project_name=del_bookmark)
+		for bookmark in bookmarks:
+			request.user.bookmarks.remove(bookmark)
+			request.user.save()
 		messages.success(request, 'Bookmark deleted')
 	
 	context = {
