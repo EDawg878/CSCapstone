@@ -35,8 +35,10 @@ class StudentForm(forms.Form):
 	experience = forms.IntegerField(label='Years of Experience')
 	specialty = forms.CharField(label='Specialty', max_length=100)
 
-
 class UpdateStudentForm(forms.ModelForm):
 	class Meta:
 		model = Student
 		fields = ('university', 'class_standing', 'language', 'experience', 'specialty')
+
+class AddStudentForm(forms.Form):
+	student = forms.CharField(label='Text', max_length=500)	

@@ -10,6 +10,7 @@ from . import forms
 from .models import Student
 from django.contrib import messages
 from AuthenticationApp.models import MyUser
+from django.http import HttpResponseRedirect
 
 def getUniversities(request):
     if request.user.is_authenticated():
@@ -27,10 +28,11 @@ def getUniversity(request):
         del_student = request.GET.get('delete_student', -1)
         in_university = models.University.objects.get(name__exact=in_name)
         if del_student >= 0:
-            student = MyUser.objects.get(id__exact=del_student)
-            in_university.members.remove(request.user)
+            user = MyUser.objects.get(id__exact=del_student)
+            student = Student.objects.get(user_id__exact=del_student)
+            in_university.members.remove(user)
             in_university.save();
-            student.university_set.remove(in_university)
+            student.university = None
             student.save()
             messages.success(request, 'Removed student')
 
@@ -212,3 +214,29 @@ def unjoinCourse(request):
 		}
 		return render(request, 'course.html', context)
 	return render(request, 'autherror.html')
+
+def add_student(request):
+    if request.method == 'POST':
+        in_name = request.GET.get('name', 'None')
+        form = forms.AddStudentForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['student']
+            in_university = models.University.objects.get(name__exact=in_name)
+            if request.user.role == 'teacher' or request.user.role == 'admin':
+                to_add = MyUser.objects.filter(email__exact=email)
+                if to_add.exists():
+                    to_add = to_add[0]
+                    if to_add.role == 'student':
+                        student = Student.objects.get(user_id__exact=to_add.id)
+                        in_university.members.add(to_add)
+                        in_university.save()
+                        student.university_id = in_university.id
+                        student.save()
+                    else:
+                        messages.warning(request, 'User must be a student to be added to the university')
+                else:
+                    messages.warning(request, 'Email not found')
+            else:
+                messages.warning(request, 'You must be a teacher to add students')
+        return HttpResponseRedirect("/university?name="+in_name)
+    return HttpResponseRedirect("/university/all")
