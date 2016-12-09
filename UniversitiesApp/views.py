@@ -8,6 +8,8 @@ from django.shortcuts import render
 from . import models
 from . import forms
 from .models import Student
+from django.contrib import messages
+from AuthenticationApp.models import MyUser
 
 def getUniversities(request):
     if request.user.is_authenticated():
@@ -22,7 +24,16 @@ def getUniversities(request):
 def getUniversity(request):
     if request.user.is_authenticated():
         in_name = request.GET.get('name', 'None')
+        del_student = request.GET.get('delete_student', -1)
         in_university = models.University.objects.get(name__exact=in_name)
+        if del_student >= 0:
+            student = MyUser.objects.get(id__exact=del_student)
+            in_university.members.remove(request.user)
+            in_university.save();
+            student.university_set.remove(in_university)
+            student.save()
+            messages.success(request, 'Removed student')
+
         is_member = in_university.members.filter(email__exact=request.user.email)
         context = {
             'university' : in_university,

@@ -16,5 +16,5 @@ urlpatterns = [
     url(r'^group/add_project$', views.add_project, name='GAddProject'),
     url(r'^group/add_comment$', views.add_comment, name='GroupAddComment'),
     url(r'^group/delete_comment$', views.delete_comment, name='GroupDeleteComment'),
-    url(r'^group/add_member$', views.add_member, name='AddMember')
+    url(r'^group/add_member$', views.add_member, name='AddMember'),
 ]

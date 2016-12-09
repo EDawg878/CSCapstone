@@ -8,11 +8,13 @@
 			<h3>{{ university.name }}</h3>
 			<p>{{ university.description }}</p>
             <h5><a href="{{ university.website }}">Website</a></h5>
-            {% if userIsMember %}
-            <a href="/university/unjoin?name={{ university.name }}" class="btn btn-default">Unjoin this University</a>
-            {% else %}
-            <a href="/university/join?name={{ university.name }}" class="btn btn-default">Join this University</a>
-            {% endif %}
+			{% if user.role == 'student' %}
+            	{% if userIsMember %}
+            	<a href="/university/unjoin?name={{ university.name }}" class="btn btn-default">Unjoin this University</a>
+            	{% else %}
+            	<a href="/university/join?name={{ university.name }}" class="btn btn-default">Join this University</a>
+            	{% endif %}
+			{% endif %}
 		</div>
     </div>
     <div class="container" role="main">
@@ -27,11 +29,25 @@
 					{% for item in university.members.all %}
 					<tr>
 						<td>{{ item.get_full_name }}</td>
+						{% if user.role == 'admin' or user.role == 'teacher' %}
+						<td><a href='/university?name={{ university.name }}&delete_student={{ item.id }}' class='btn btn-default'>Remove Student</a></td>
+						{% endif %}
 					</tr>
 					{% endfor %}
 				</tbody>
 			</table>
 		</div>
+		{% if user.role == 'admin' or user.role == 'teacher' %}
+    	<div class="panel panel-default">
+        	<form method="post" enctype="multipart/form-data" action="/university/add_student?name={{ university.name }}" class="panel-body validate">
+        	{% csrf_token %}
+            	<label for="member">Student Email</label>
+             	<input type="text" name="student" id="student" placeholder="Student" class="form-control" data-bvalidator="required" data-bvalidator-msg="Student Email Required">
+             	<br>
+             	<input type="submit" value="Add" class="btn btn-primary">
+        	</form>
+    	</div>
+		{% endif %}
 		<div class="table-responsive">
 			<table class="table table-striped sortable">
 				<thead>
