@@ -19,7 +19,11 @@ def getProjectForm(request):
 				name = form.cleaned_data['name'],
 				description = form.cleaned_data['description'],
 				created_at = datetime.datetime.now(),
-				updated_at = datetime.datetime.now()
+				updated_at = datetime.datetime.now(),
+				website = form.cleaned_data['website'],
+				language = form.cleaned_data['language'],
+				specialty = form.cleaned_data['specialty'],
+				experience = form.cleaned_data['experience']
 			)
 			new_project.save()
 			messages.success(request, 'New project created')

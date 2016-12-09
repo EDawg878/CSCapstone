@@ -31,6 +31,20 @@
 		<div class="table-responsive">
 			<table class="table table-striped sortable">
 				<thead>
+					<tr><th>Suggested Projects</th></tr>
+				</thead>
+				<tbody>
+					{% for item in suggested %}
+					<tr>
+						<td><a href="/project?name={{ item.name }}">{{ item.name }}</a></td>
+					<tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<div class="table-responsive">
+			<table class="table table-striped sortable">
+				<thead>
 					<tr>
 						<th>Users</th>
 					</tr>

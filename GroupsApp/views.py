@@ -12,6 +12,8 @@ from CommentsApp.models import Comment
 from CommentsApp.forms import CommentForm
 from AuthenticationApp.forms import MyUser
 from ProjectsApp.models import Project
+from UniversitiesApp.models import Student
+from sets import Set
 
 def getGroups(request):
     if request.user.is_authenticated():
@@ -27,6 +29,19 @@ def getGroups(request):
     # render error page if user is not logged in
     return render(request, 'autherror.html')
 
+def getSuggestions(group):
+    suggestions = Set()
+    for member in group.members.filter():
+        if member.role == 'student':
+            student = Student.objects.get(user_id__exact=member.id)
+            projects = Project.objects.filter(language=student.language)
+            for project in projects:
+                suggestions.add(project.name)
+    ret = []
+    for suggestion in suggestions:
+        ret.append({ 'name' : suggestion })
+    return ret
+
 def getGroup(request):
     if request.user.is_authenticated():
         del_comment = request.GET.get('delete_comment', -1)
@@ -37,7 +52,9 @@ def getGroup(request):
         in_group = models.Group.objects.get(name__exact=in_name)
         is_member = in_group.members.filter(email__exact=request.user.email)
         comments_list = Comment.objects.filter(group_id = in_group.id)
+        suggested = getSuggestions(in_group)
         context = {
+			'suggested' : suggested,
             'group' : in_group,
             'userIsMember': is_member,
             'comments' : comments_list
@@ -80,7 +97,9 @@ def joinGroup(request):
         comments_list = Comment.objects.filter(group_id = in_group.id)
         request.user.group_set.add(in_group)
         request.user.save()
+        suggested = getSuggestions(in_group)
         context = {
+            'suggested' : suggested,
             'comments' : comments_list,
             'group' : in_group,
             'userIsMember': True,
@@ -97,8 +116,10 @@ def unjoinGroup(request):
         request.user.group_set.remove(in_group)
         request.user.save()
         comments_list = Comment.objects.filter(group_id = in_group.id)
+        suggested = getSuggestions(in_group)
         context = {
-                     'comments': comments_list,
+            'suggested' : suggested,
+            'comments': comments_list,
             'group' : in_group,
             'userIsMember': False,
         }
@@ -117,8 +138,10 @@ def add_project(request):
                in_group.project = form.cleaned_data['project']
                in_group.save()
         comments_list = Comment.objects.filter(group_id = in_group.id)
+        suggested = getSuggestions(in_group)
         context = {
-                     'comments' : comments_list,
+            'suggested' : suggested,
+            'comments' : comments_list,
             'group' : in_group,
             'userIsMember': True,
         }
@@ -138,10 +161,12 @@ def add_comment(request):
                           comment=form.cleaned_data['comment'])
             new_comment.save()
             comments_list = Comment.objects.filter(group_id = in_group.id)
+            suggested = getSuggestions(in_group)
             context = {
               'group' : in_group,
               'userIsMember': is_member,
-                     'comments' : comments_list
+              'comments' : comments_list,
+              'suggested' : suggested
             }
             return render(request, 'group.html', context)
         else:
@@ -159,10 +184,12 @@ def delete_comment(request):
             comment.delete()
             messages.success(request, 'Deleted comment')
             comments_list = Comment.objects.filter(group_id = in_group.id)
+            suggested = getSuggestions(in_group)
             context = {
                 'group' : in_group,
                 'userIsMember': is_member,
-                'comments' : comments_list
+                'comments' : comments_list,
+                'suggested' : suggested
             }
             return render(request, 'group.html', context)
     return render(request, 'index.html')
